@@ -17,10 +17,10 @@ export class SearchcasterHelper {
     address?: string;
     // eslint-disable-next-line camelcase
     connected_address?: string;
-  }): Promise<FarcasterUser[]> {
+  }): Promise<FarcasterUser> {
     const queryParams: string[] = Object.keys(options).map((key) => `${key}=${options[key]}`);
     const response = await this.axiosInstance.get(`profiles?${queryParams.join('&')}`);
-    return response.data;
+    return response.data[0];
   }
 
   async getFarcasterCasts(options: {

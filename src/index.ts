@@ -1,12 +1,13 @@
 import { init } from '@airstack/node';
 
 import 'dotenv/config';
-import { fetchFarcasterUserData } from './profile';
+import { connect } from './mongodb/connect';
+import { syncProfilesOnMongoDB } from './profile/utils';
 
 async function main() {
   init(process.env.AIRSTACK_API_KEY, 'dev');
-
-  await fetchFarcasterUserData('limone.eth');
+  await connect();
+  await syncProfilesOnMongoDB();
 }
 
 main()
