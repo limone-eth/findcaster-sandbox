@@ -1,8 +1,10 @@
-import supabase from './index';
-import SupabaseProfile from './interfaces/profile';
+import supabase from './index.js';
+import SupabaseProfile from './interfaces/profile.js';
+
+const TABLE_NAME_PROFILE = 'profile';
 
 export const findFarcasterProfileByUsername = async (username: string): Promise<SupabaseProfile> => {
-  const { data, error } = await supabase.from('profile').select('*').eq('username', username).single();
+  const { data, error } = await supabase.from(TABLE_NAME_PROFILE).select('*').eq('username', username).single();
   if (error) {
     throw error;
   }
@@ -10,7 +12,7 @@ export const findFarcasterProfileByUsername = async (username: string): Promise<
 };
 
 export const findFarcasterProfileByAddress = async (address: string): Promise<SupabaseProfile> => {
-  const { data, error } = await supabase.from('profile').select('*').eq('address', address).single();
+  const { data, error } = await supabase.from(TABLE_NAME_PROFILE).select('*').eq('address', address).single();
   if (error) {
     throw error;
   }
@@ -18,7 +20,15 @@ export const findFarcasterProfileByAddress = async (address: string): Promise<Su
 };
 
 export const findFarcasterProfileById = async (id: string): Promise<SupabaseProfile> => {
-  const { data, error } = await supabase.from('profile').select('*').eq('id', id).single();
+  const { data, error } = await supabase.from(TABLE_NAME_PROFILE).select('*').eq('id', id).single();
+  if (error) {
+    throw error;
+  }
+  return data;
+};
+
+export const findAllFarcasterProfiles = async (from = 0, to = 10): Promise<SupabaseProfile[]> => {
+  const { data, error } = await supabase.from(TABLE_NAME_PROFILE).select('*').range(from, to);
   if (error) {
     throw error;
   }
