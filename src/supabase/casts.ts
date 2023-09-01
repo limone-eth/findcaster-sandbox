@@ -12,6 +12,7 @@ export const findCastByHash = async (hash: string): Promise<SupabaseCast> => {
 export const findCastsByAuthorFid = async (authorFid: number): Promise<SupabaseCast[]> => {
   const { data, error } = await supabase.from('casts').select('*').eq('author_fid', authorFid);
   if (error) {
+    console.error('Error finding casts by author fid', authorFid);
     throw error;
   }
   return data;

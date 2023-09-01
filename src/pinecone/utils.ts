@@ -1,5 +1,5 @@
 import { PineconeClient } from '@pinecone-database/pinecone';
-import { HuggingFaceInferenceEmbeddings } from 'langchain/embeddings/hf';
+import { CohereEmbeddings } from 'langchain/embeddings';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 
 import { findCastsByAuthorFid } from '../supabase/casts.js';
@@ -8,7 +8,7 @@ import { findAllFarcasterProfiles } from '../supabase/profiles.js';
 
 const PINECONE_INDEX = 'findcaster';
 
-const MODEL_NAME = 'sentence-transformers/paraphrase-multilingual-mpnet-base-v2';
+const MODEL_NAME = 'embed-english-v2.0';
 
 export const searchPinecone = async (query: string) => {
   console.log('Searching...');
@@ -19,14 +19,10 @@ export const searchPinecone = async (query: string) => {
   });
   const pineconeIndex = pinecone.Index(PINECONE_INDEX);
 
-  /* const embeddings = new CohereEmbeddings({
+  const embeddings = new CohereEmbeddings({
     modelName: MODEL_NAME,
     apiKey: process.env.COHERE_API_KEY, // In Node.js defaults to process.env.COHERE_API_KEY
     batchSize: 48, // Default value if omitted is 48. Max value is 96
-  }); */
-  const embeddings = new HuggingFaceInferenceEmbeddings({
-    apiKey: process.env.HUGGING_FACE_API_KEY,
-    model: MODEL_NAME,
   });
   const queryEmbedding = await embeddings.embedQuery(query);
 
@@ -98,14 +94,10 @@ export const syncProfileToPinecone = async (profile: SupabaseProfile) => {
 
   const pineconeIndex = pinecone.Index(PINECONE_INDEX);
 
-  /* const embeddings = new CohereEmbeddings({
+  const embeddings = new CohereEmbeddings({
     modelName: MODEL_NAME,
     apiKey: process.env.COHERE_API_KEY, // In Node.js defaults to process.env.COHERE_API_KEY
     batchSize: 48, // Default value if omitted is 48. Max value is 96
-  }); */
-  const embeddings = new HuggingFaceInferenceEmbeddings({
-    apiKey: process.env.HUGGING_FACE_API_KEY,
-    model: MODEL_NAME,
   });
   const embeddingArrays = await embeddings.embedDocuments(docs.map((doc) => doc.pageContent));
 
