@@ -1,0 +1,20 @@
+version: '3.4'
+services:
+  weaviate:
+    image: semitechnologies/weaviate:1.20.5
+    restart: on-failure:0
+    ports:
+     - "8080:8080"
+    environment:
+      # Enables API key authentication.
+      AUTHENTICATION_APIKEY_ENABLED: 'true'
+      # List one or more keys, separated by commas. Each key corresponds to a specific user identity below.
+      AUTHENTICATION_APIKEY_ALLOWED_KEYS: ""
+      # List one or more user identities, separated by commas. Each identity corresponds to a specific key above.
+      AUTHENTICATION_APIKEY_USERS: 'admin'
+      QUERY_DEFAULTS_LIMIT: 20
+      PERSISTENCE_DATA_PATH: "./data"
+      DEFAULT_VECTORIZER_MODULE: text2vec-huggingface
+      ENABLE_MODULES: "text2vec-huggingface,ref2vec-centroid"
+      HUGGINGFACE_APIKEY: ""
+      CLUSTER_HOSTNAME: 'node1'
