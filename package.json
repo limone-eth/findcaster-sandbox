@@ -7,7 +7,7 @@
   "scripts": {
     "start:": "node lib/index.js",
     "pinecone": "node --experimental-modules lib/index.js",
-    "pinecone:ts": "ts-node src/index.ts",
+    "pinecone:ts": "ts-node-esm src/index.ts",
     "build:watch": "tsc -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,7 +23,7 @@
     "axios": "^1.4.0",
     "cohere-ai": "^5.1.0",
     "dotenv": "^16.3.1",
-    "langchain": "^0.0.135",
+    "langchain": "^0.0.138",
     "mongoose": "^7.4.2",
     "ts-node": "^10.9.1"
   },

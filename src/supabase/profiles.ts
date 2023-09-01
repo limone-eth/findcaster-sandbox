@@ -28,10 +28,12 @@ export const findFarcasterProfileById = async (id: string): Promise<SupabaseProf
 };
 
 export const findAllFarcasterProfiles = async (from = 0, to = 10): Promise<SupabaseProfile[]> => {
+  console.log('Fetching profiles from', from, 'to', to);
   const { data, error } = await supabase.from(TABLE_NAME_PROFILE).select('*').range(from, to);
   if (error) {
     throw error;
   }
+  console.log(data.length);
   return data;
 };
 

@@ -1,5 +1,4 @@
 import { PineconeClient } from '@pinecone-database/pinecone';
-import { CohereEmbeddings } from 'langchain/embeddings/cohere';
 import { HuggingFaceInferenceEmbeddings } from 'langchain/embeddings/hf';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 
@@ -8,6 +7,8 @@ import SupabaseProfile from '../supabase/interfaces/profile.js';
 import { findAllFarcasterProfiles } from '../supabase/profiles.js';
 
 const PINECONE_INDEX = 'findcaster';
+
+const MODEL_NAME = 'sentence-transformers/paraphrase-multilingual-mpnet-base-v2';
 
 export const searchPinecone = async (query: string) => {
   console.log('Searching...');
@@ -18,19 +19,21 @@ export const searchPinecone = async (query: string) => {
   });
   const pineconeIndex = pinecone.Index(PINECONE_INDEX);
 
-  // const embeddings = new CohereEmbeddings({
-  //   apiKey: process.env.COHERE_API_KEY, // In Node.js defaults to process.env.COHERE_API_KEY
-  //   batchSize: 48, // Default value if omitted is 48. Max value is 96
-  // });
+  /* const embeddings = new CohereEmbeddings({
+    modelName: MODEL_NAME,
+    apiKey: process.env.COHERE_API_KEY, // In Node.js defaults to process.env.COHERE_API_KEY
+    batchSize: 48, // Default value if omitted is 48. Max value is 96
+  }); */
   const embeddings = new HuggingFaceInferenceEmbeddings({
     apiKey: process.env.HUGGING_FACE_API_KEY,
+    model: MODEL_NAME,
   });
   const queryEmbedding = await embeddings.embedQuery(query);
 
   // Query Pinecone index and return top 10 document matches
   const { matches } = await pineconeIndex.query({
     queryRequest: {
-      topK: 2,
+      topK: 10,
       vector: queryEmbedding,
       includeMetadata: true,
       includeValues: true,
@@ -71,6 +74,7 @@ function chunkArray<T>(arr: T[], chunkSize: number): T[][] {
 }
 
 export const syncProfileToPinecone = async (profile: SupabaseProfile) => {
+  console.log('Syncing profile', profile.id);
   const casts = await findCastsByAuthorFid(profile.id);
   const castArray = casts?.map((cast) => cast.text);
   if (!profile.bio && (!castArray || castArray.length === 0)) {
@@ -94,12 +98,14 @@ export const syncProfileToPinecone = async (profile: SupabaseProfile) => {
 
   const pineconeIndex = pinecone.Index(PINECONE_INDEX);
 
-  // const embeddings = new CohereEmbeddings({
-  //   apiKey: process.env.COHERE_API_KEY, // In Node.js defaults to process.env.COHERE_API_KEY
-  //   batchSize: 48, // Default value if omitted is 48. Max value is 96
-  // });
+  /* const embeddings = new CohereEmbeddings({
+    modelName: MODEL_NAME,
+    apiKey: process.env.COHERE_API_KEY, // In Node.js defaults to process.env.COHERE_API_KEY
+    batchSize: 48, // Default value if omitted is 48. Max value is 96
+  }); */
   const embeddings = new HuggingFaceInferenceEmbeddings({
     apiKey: process.env.HUGGING_FACE_API_KEY,
+    model: MODEL_NAME,
   });
   const embeddingArrays = await embeddings.embedDocuments(docs.map((doc) => doc.pageContent));
 
